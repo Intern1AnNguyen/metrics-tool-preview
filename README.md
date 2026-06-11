@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Automated Metrics Tool — US-01: Google Analytics 4
 **Studio Kula / Community, Serve Us**
 Prepared by: An Nguyen (Intern) | Supervised by: Danielle Busko (CEO)
@@ -102,3 +103,6 @@ Running GA4 report: 2026-05-11 → 2026-06-10
 1. Fill in `.env` with Property ID and service account path
 2. Run `python ga4_metrics.py` to confirm live data pulls
 3. Expand to additional platforms: Instagram, Facebook, LinkedIn, YouTube (US-02+)
+=======
+# metrics-tool
+>>>>>>> 94f5744d26d7d7d545c711220153f263d31e4818
