@@ -86,7 +86,21 @@ def run_report(start_date: str, end_date: str):
     )
 
     # Run report
-    response = client.run_report(request)
+    try:
+        response = client.run_report(request)
+    except Exception as e:
+        print(f"\n[ALERT] GA4 API call failed: {e}")
+        print("Check: service account permissions, property ID, and network connection.")
+        print("Falling back to mock data.\n")
+        _print_mock_report(start_date, end_date)
+        return
+
+    # Check for empty response
+    if not response.rows:
+        print("\n[ALERT] GA4 returned no data for this date range.")
+        print("Check: date range, property ID, and whether the site has traffic.")
+        _print_mock_report(start_date, end_date)
+        return
 
     # Print results
     _print_report(response, start_date, end_date)
