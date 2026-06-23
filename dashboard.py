@@ -166,7 +166,7 @@ with st.sidebar:
     st.markdown("### Platform status")
     st.markdown("✅ CS.Us GA4 (US-01)")
     st.markdown("🔄 Studio Kula GA4 (US-02)")
-    st.markdown("⏳ YouTube (US-06)")
+    st.markdown("✅ YouTube (US-06))")
     st.markdown("⏳ LinkedIn (US-05)")
     st.markdown("⚠️ Instagram (US-03)")
     st.markdown("⚠️ Facebook (US-04)")
@@ -238,9 +238,55 @@ with tab2:
 # ── TAB 3: YouTube ──
 with tab3:
     st.markdown("### YouTube — US-06")
-    st.caption("YouTube Data API v3 · Awaiting: channel ID + API key")
-    mock_banner("YouTube")
-    data = MOCK_YOUTUBE
+    st.caption("YouTube Data API v3 · Studio Kula Channel")
+
+    YT_API_KEY    = os.getenv("YOUTUBE_API_KEY")
+    YT_CHANNEL_ID = os.getenv("YOUTUBE_CHANNEL_ID")
+    YT_MOCK       = not YT_API_KEY or not YT_CHANNEL_ID
+
+    if YT_MOCK:
+        mock_banner("YouTube")
+        data = MOCK_YOUTUBE
+    else:
+        try:
+            from googleapiclient.discovery import build
+            youtube = build("youtube", "v3", developerKey=YT_API_KEY)
+            channel_response = youtube.channels().list(
+                part="snippet,statistics",
+                id=YT_CHANNEL_ID
+            ).execute()
+            channel = channel_response["items"][0]
+            stats   = channel["statistics"]
+            search_response = youtube.search().list(
+                part="snippet",
+                channelId=YT_CHANNEL_ID,
+                order="viewCount",
+                type="video",
+                maxResults=1,
+                publishedAfter=f"{start_date}T00:00:00Z",
+                publishedBefore=f"{end_date}T23:59:59Z",
+            ).execute()
+            top_video = "No videos this period"
+            top_views = "—"
+            if search_response.get("items"):
+                vid = search_response["items"][0]
+                top_video = vid["snippet"]["title"]
+                vid_stats = youtube.videos().list(
+                    part="statistics", id=vid["id"]["videoId"]
+                ).execute()
+                if vid_stats.get("items"):
+                    top_views = f"{int(vid_stats['items'][0]['statistics'].get('viewCount', 0)):,}"
+            data = {
+                "subscribers":      f"{int(stats.get('subscriberCount', 0)):,}",
+                "total_views":      f"{int(stats.get('viewCount', 0)):,}",
+                "watch_time_hours": "N/A (requires OAuth)",
+                "avg_view_duration":"N/A (requires OAuth)",
+                "top_video":        top_video,
+                "top_video_views":  top_views,
+            }
+        except Exception as e:
+            st.error(f"YouTube API error: {e}")
+            data = MOCK_YOUTUBE
 
     c1, c2, c3 = st.columns(3)
     c1.metric("Subscribers", data["subscribers"])
