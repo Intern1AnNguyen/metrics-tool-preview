@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-# Automated Metrics Tool — US-01: Google Analytics 4
+# Automated Metrics Tool
 **Studio Kula / Community, Serve Us**
 Prepared by: An Nguyen (Intern) | Supervised by: Danielle Busko (CEO)
 
@@ -7,7 +6,17 @@ Prepared by: An Nguyen (Intern) | Supervised by: Danielle Busko (CEO)
 
 ## What This Does
 
-Pulls core website metrics from Google Analytics 4 (GA4) for the CS.Us property and prints a summary report to the terminal. Metrics include sessions, users, pageviews, bounce rate, and average session duration for any date range.
+Automatically pulls 28-day metrics from all tracked platforms and displays them in a browser dashboard. Replaces Danielle's manual monthly tracking across 6 platforms.
+
+**Platforms:**
+| Story | Platform | API | Status |
+|---|---|---|---|
+| US-01 | CS.Us website | GA4 Data API | ✅ Live |
+| US-02 | Studio Kula website | GA4 Data API | ✅ Live |
+| US-06 | YouTube | YouTube Data API v3 | 🔄 In progress |
+| US-05 | LinkedIn | LinkedIn API | 🔄 In progress |
+| US-03 | Instagram | Meta Graph API | 🔄 In progress |
+| US-04 | Facebook | Meta Graph API | 🔄 In progress |
 
 ---
 
@@ -15,94 +24,95 @@ Pulls core website metrics from Google Analytics 4 (GA4) for the CS.Us property 
 
 ### 1. Install dependencies
 ```bash
-pip install google-analytics-data google-auth python-dotenv
+pip install google-analytics-data google-auth python-dotenv streamlit
 ```
 
 ### 2. Configure credentials
-Rename `.env.example` to `.env`:
+Copy `.env.example` to `.env`:
 ```bash
 cp .env.example .env
 ```
 
-Then open `.env` and fill in:
-- `GA4_PROPERTY_ID` — find this in GA4 > Admin > Property Settings
-- `GA4_SERVICE_ACCOUNT_FILE` — path to your service account JSON file (default: `service_account.json`)
+Fill in your `.env`:
+```
+GA4_PROPERTY_ID=your_csus_property_id
+GA4_PROPERTY_ID_SK=your_studiokula_property_id
+GA4_SERVICE_ACCOUNT_FILE=service_account.json
+```
 
 ### 3. Add the service account JSON
 Place the downloaded `service_account.json` file in this folder.
 
-> **Important:** The service account must have **Viewer** access to the GA4 property.
+> **Important:** The service account must have **Viewer** access to both GA4 properties.
 > In GA4: Admin > Property Access Management > Add the service account email with Viewer role.
 
 ---
 
 ## Usage
 
-**Default (last 30 days):**
+**Run the browser dashboard (recommended):**
+```bash
+python -m streamlit run dashboard.py
+```
+Opens at `http://localhost:8501`
+
+**Run individual scripts (terminal output):**
 ```bash
 python ga4_metrics.py
+python studio_kula_metrics.py
 ```
 
 **Custom date range:**
 ```bash
-python ga4_metrics.py --start 2026-01-01 --end 2026-06-10
+python ga4_metrics.py --start 2026-01-01 --end 2026-06-22
 ```
 
 ---
 
-## Sample Output
+## Sample Output (CS.Us GA4)
 
 ```
-Running GA4 report: 2026-05-11 → 2026-06-10
+Running GA4 report: 2026-05-23 → 2026-06-22
 
 ════════════════════════════════════════════════════════════
   STUDIO KULA — GA4 METRICS REPORT
-  Period: 2026-05-11 → 2026-06-10
+  Period: 2026-05-23 → 2026-06-22
 ════════════════════════════════════════════════════════════
-
-  Metric                         Value
+  Metric                                   Value
   ---------------------------------------------
-  Total Sessions                 1,284
-  Total Users                      976
-  Total Pageviews                3,541
-  Avg Bounce Rate                42.3%
-  Avg Session Duration           2m 14s
+  Total Sessions                             915
+  Total Users                                883
+  Total Pageviews                          1,109
+  Avg Bounce Rate                         74.3%
+  Avg Session Duration                    1m 10s
   ---------------------------------------------
-
-  30 days of data returned.
+  31 days of data returned.
 ════════════════════════════════════════════════════════════
 ```
 
 ---
 
-## Status
+## Mock Mode
 
-| Item | Status |
-|------|--------|
-| Script scaffolded | ✅ Done |
-| Mock output working | ✅ Done |
-| GA4 Property ID | ⏳ Waiting on Danielle |
-| Service Account JSON | ⏳ Waiting on Danielle |
-| Live data confirmed | ⏳ Pending credentials |
+All scripts run in **mock mode** automatically when credentials are missing — no errors, just sample data. This allows development and demos without live credentials.
+
+Mock mode disables automatically when valid credentials are found in `.env`.
 
 ---
 
 ## Files
 
 | File | Purpose |
-|------|---------|
-| `ga4_metrics.py` | Main script |
-| `.env.example` | Credentials template — rename to `.env` and fill in |
+|---|---|
+| `dashboard.py` | 6-tab Streamlit browser dashboard |
+| `ga4_metrics.py` | CS.Us GA4 script (US-01) |
+| `studio_kula_metrics.py` | Studio Kula GA4 script (US-02) |
+| `.env.example` | Credentials template — copy to `.env` and fill in |
 | `.env` | Your actual credentials — **never commit this** |
 | `service_account.json` | Google service account key — **never commit this** |
 | `.gitignore` | Protects credentials from being pushed to GitHub |
 
 ---
 
-## Next Steps (After Credentials Received)
-1. Fill in `.env` with Property ID and service account path
-2. Run `python ga4_metrics.py` to confirm live data pulls
-3. Expand to additional platforms: Instagram, Facebook, LinkedIn, YouTube (US-02+)
-=======
-# metrics-tool
->>>>>>> 94f5744d26d7d7d545c711220153f263d31e4818
+## Repo
+github.com/Studio-Kula/metrics-tool
