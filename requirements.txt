@@ -1,0 +1,5 @@
+streamlit
+python-dotenv
+google-analytics-data
+google-auth
+google-api-python-client
